@@ -17,22 +17,14 @@ from sklearn.metrics import (
     classification_report
 )
 
-
-# ============================================================
 # PAGE SETUP
-# ============================================================
-
 st.set_page_config(
     page_title="Breast Cancer Classification",
     page_icon="🩺",
     layout="wide"
 )
 
-
-# ============================================================
 # PROJECT FILES
-# ============================================================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "model")
 
@@ -44,11 +36,7 @@ MODEL_FILES = {
     "Random Forest": "random_forest.pkl"
 }
 
-
-# ============================================================
 # SIMPLE CUSTOM STYLE
-# ============================================================
-
 st.markdown(
     """
 <style>
@@ -56,7 +44,6 @@ st.markdown(
 .stApp {
     background-color: #f7f8fa;
 }
-
 /* Main heading */
 .main-header {
     background: linear-gradient(135deg, #172554, #164e63);
@@ -65,22 +52,17 @@ st.markdown(
     margin-bottom: 22px;
     border-left: 6px solid #2dd4bf;
 }
-
 .header-title {
     color: white;
     font-size: 30px;
     font-weight: 700;
 }
-
 .header-subtitle {
     color: #a5f3fc;
     font-size: 15px;
     margin-top: 5px;
 }
-
-
 /* Section headings */
-
 .section-title {
     font-size: 19px;
     font-weight: 650;
@@ -90,40 +72,32 @@ st.markdown(
     margin-bottom: 15px;
     border-left: 5px solid;
 }
-
 .section-orange {
     background-color: #fff3e0;
     color: #e65100;
     border-left-color: #fb8c00;
 }
-
 .section-blue {
     background-color: #e3f2fd;
     color: #1565c0;
     border-left-color: #42a5f5;
 }
-
 .section-green {
     background-color: #e8f5e9;
     color: #2e7d32;
     border-left-color: #66bb6a;
 }
-
 .section-purple {
     background-color: #f3e5f5;
     color: #6a1b9a;
     border-left-color: #ab47bc;
 }
-
 .section-yellow {
     background-color: #fffde7;
     color: #8d6e00;
     border-left-color: #fbc02d;
 }
-
-
 /* Information boxes */
-
 .info-card {
     background-color: white;
     border: 1px solid #dbe2ea;
@@ -131,10 +105,7 @@ st.markdown(
     padding: 16px 20px;
     margin-bottom: 15px;
 }
-
-
 /* Metric cards */
-
 .metric-card {
     background-color: white;
     border: 1px solid #dbe2ea;
@@ -143,22 +114,17 @@ st.markdown(
     padding: 14px;
     text-align: center;
 }
-
 .metric-name {
     color: #64748b;
     font-size: 13px;
 }
-
 .metric-value {
     color: #0f172a;
     font-size: 24px;
     font-weight: 700;
     margin-top: 4px;
 }
-
-
 /* Winner box */
-
 .winner-box {
     background-color: #ecfeff;
     border: 1px solid #5eead4;
@@ -167,13 +133,11 @@ st.markdown(
     padding: 18px 22px;
     margin-top: 18px;
 }
-
 .winner-title {
     color: #0f766e;
     font-size: 13px;
     font-weight: 700;
 }
-
 .winner-model {
     color: #134e4a;
     font-size: 24px;
@@ -181,9 +145,7 @@ st.markdown(
     margin-top: 4px;
 }
 
-
 /* Sidebar */
-
 section[data-testid="stSidebar"] {
     background-color: #eaf2f4;
 }
@@ -193,11 +155,7 @@ section[data-testid="stSidebar"] {
     unsafe_allow_html=True
 )
 
-
-# ============================================================
 # HEADER
-# ============================================================
-
 st.markdown(
     """
 <div class="main-header">
@@ -208,53 +166,31 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# ============================================================
 # LOAD FEATURE NAMES
-# ============================================================
-
-feature_file = os.path.join(
-    MODEL_DIR,
-    "feature_names.json"
-)
+feature_file = os.path.join(MODEL_DIR,"feature_names.json")
 
 try:
-
     with open(feature_file, "r") as file:
         feature_names = json.load(file)
-
 except FileNotFoundError:
-
     st.error(
         "feature_names.json was not found inside the model folder."
     )
     st.stop()
 
-
-# ============================================================
 # SIDEBAR
-# ============================================================
-
 st.sidebar.markdown("## ⚙️ Controls")
-
 st.sidebar.write(
     "Select a trained model and upload the test dataset."
 )
-
-selected_model = st.sidebar.selectbox(
-    "Classification Model",
-    list(MODEL_FILES.keys())
-)
-
+selected_model = st.sidebar.selectbox("Classification Model",list(MODEL_FILES.keys()))
 st.sidebar.markdown("---")
-
 uploaded_file = st.sidebar.file_uploader(
     "Upload Test CSV",
     type=["csv"]
 )
 
 st.sidebar.markdown("---")
-
 st.sidebar.markdown(
     """
 **Dataset**
@@ -269,11 +205,7 @@ Accuracy · AUC · Precision · Recall · F1 · MCC
 """
 )
 
-
-# ============================================================
 # WAIT FOR FILE
-# ============================================================
-
 if uploaded_file is None:
 
     st.markdown(
@@ -294,32 +226,19 @@ compare all five saved classification models.
 """,
         unsafe_allow_html=True
     )
-
     st.stop()
 
-
-# ============================================================
 # READ TEST DATA
-# ============================================================
-
 try:
-
     test_df = pd.read_csv(uploaded_file)
-
 except Exception as error:
-
     st.error(
         f"Unable to read the uploaded CSV file: {error}"
     )
     st.stop()
 
-
-# ============================================================
 # CHECK REQUIRED COLUMNS
-# ============================================================
-
 required_columns = feature_names + ["target"]
-
 missing_columns = [
     column
     for column in required_columns
@@ -327,19 +246,11 @@ missing_columns = [
 ]
 
 if missing_columns:
-
-    st.error(
-        "The uploaded file is missing these required columns: "
-        + ", ".join(missing_columns)
-    )
-
+    st.error("The uploaded file is missing these required columns: "
+        + ", ".join(missing_columns))
     st.stop()
 
-
-# ============================================================
 # TEST DATA OVERVIEW
-# ============================================================
-
 st.markdown(
     """
 <div class="section-title section-orange">
@@ -348,107 +259,45 @@ st.markdown(
 """,
     unsafe_allow_html=True
 )
-
 info1, info2, info3 = st.columns(3)
-
 with info1:
-    st.metric(
-        "Test Samples",
-        len(test_df)
-    )
+    st.metric("Test Samples",len(test_df))
 
 with info2:
-    st.metric(
-        "Number of Features",
-        len(feature_names)
-    )
+    st.metric("Number of Features",len(feature_names))
 
 with info3:
-    st.metric(
-        "Selected Model",
-        selected_model
-    )
+    st.metric("Selected Model",selected_model)
 
-
-# ============================================================
 # SEPARATE FEATURES AND TARGET
-# ============================================================
-
 X_test = test_df[feature_names]
 y_test = test_df["target"]
 
-
-# ============================================================
 # LOAD SELECTED MODEL
-# ============================================================
-
-model_path = os.path.join(
-    MODEL_DIR,
-    MODEL_FILES[selected_model]
-)
-
+model_path = os.path.join(MODEL_DIR,MODEL_FILES[selected_model])
 try:
-
     model = joblib.load(model_path)
-
 except Exception as error:
-
     st.error(
         f"Unable to load the selected model: {error}"
     )
     st.stop()
 
-
-# ============================================================
 # PREDICTIONS
-# ============================================================
-
 y_pred = model.predict(X_test)
-
 y_prob = model.predict_proba(X_test)[:, 1]
 
-
-# ============================================================
 # SIX REQUIRED METRICS
-# ============================================================
-
 metrics = {
-    "Accuracy": accuracy_score(
-        y_test,
-        y_pred
-    ),
-
-    "AUC": roc_auc_score(
-        y_test,
-        y_prob
-    ),
-
-    "Precision": precision_score(
-        y_test,
-        y_pred
-    ),
-
-    "Recall": recall_score(
-        y_test,
-        y_pred
-    ),
-
-    "F1": f1_score(
-        y_test,
-        y_pred
-    ),
-
-    "MCC": matthews_corrcoef(
-        y_test,
-        y_pred
-    )
+    "Accuracy": accuracy_score(y_test,y_pred),
+    "AUC": roc_auc_score(y_test,y_prob),
+    "Precision": precision_score(y_test,y_pred),
+    "Recall": recall_score(y_test,y_pred),
+    "F1": f1_score(y_test,y_pred),
+    "MCC": matthews_corrcoef(y_test,y_pred)
 }
 
-
-# ============================================================
 # SELECTED MODEL PERFORMANCE
-# ============================================================
-
 st.markdown(
     """
 <div class="section-title section-blue">
@@ -470,7 +319,6 @@ for column, (metric_name, metric_value) in zip(
 ):
 
     with column:
-
         st.markdown(
             f"""
 <div class="metric-card">
@@ -481,11 +329,7 @@ for column, (metric_name, metric_value) in zip(
             unsafe_allow_html=True
         )
 
-
-# ============================================================
 # CONFUSION MATRIX
-# ============================================================
-
 st.markdown(
     """
 <div class="section-title section-green">
@@ -495,15 +339,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-cm = confusion_matrix(
-    y_test,
-    y_pred
-)
-
+cm = confusion_matrix(y_test,y_pred)
 cm_col1, cm_col2 = st.columns([1, 1])
-
 with cm_col1:
-
     fig, ax = plt.subplots(
         figsize=(5, 4)
     )
@@ -530,17 +368,10 @@ with cm_col1:
     ax.set_title(
         f"Confusion Matrix - {selected_model}"
     )
-
-    st.pyplot(
-        fig,
-        use_container_width=True
-    )
-
+    st.pyplot(fig,use_container_width=True)
     plt.close(fig)
 
-
 with cm_col2:
-
     st.markdown(
         """
 <div class="info-card">
@@ -569,11 +400,7 @@ particularly important.
         unsafe_allow_html=True
     )
 
-
-# ============================================================
 # CLASSIFICATION REPORT
-# ============================================================
-
 st.markdown(
     """
 <div class="section-title section-purple">
@@ -583,111 +410,55 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-report = classification_report(
-    y_test,
-    y_pred,
+report = classification_report(y_test,y_pred,
     target_names=[
         "Malignant",
         "Benign"
     ],
-    output_dict=True
-)
+    output_dict=True)
 
-report_df = (
-    pd.DataFrame(report)
-    .transpose()
-    .round(4)
-)
+report_df = (pd.DataFrame(report).transpose().round(4))
 
-st.dataframe(
-    report_df,
-    use_container_width=True
-)
+st.dataframe(report_df,use_container_width=True)
 
-
-# ============================================================
-# COMPARE ALL FIVE MODELS
-# ============================================================
-
+# COMPARE ALL THE FIVE MODELS
 st.markdown(
     """
 <div class="section-title section-yellow">
 📊 Model Performance Comparison
 </div>
 """,
-    unsafe_allow_html=True
-)
+    unsafe_allow_html=True)
 
 comparison_results = []
 
 for model_name, file_name in MODEL_FILES.items():
-
-    current_model_path = os.path.join(
-        MODEL_DIR,
-        file_name
-    )
+    current_model_path = os.path.join(MODEL_DIR,file_name)
 
     try:
-
-        current_model = joblib.load(
-            current_model_path
-        )
-
-        predictions = current_model.predict(
-            X_test
-        )
-
-        probabilities = current_model.predict_proba(
-            X_test
-        )[:, 1]
-
+        current_model = joblib.load(current_model_path)
+        predictions = current_model.predict(X_test)
+        probabilities = current_model.predict_proba(X_test)[:, 1]
         comparison_results.append(
             {
                 "Model": model_name,
-
-                "Accuracy": accuracy_score(
-                    y_test,
-                    predictions
-                ),
-
-                "AUC": roc_auc_score(
-                    y_test,
-                    probabilities
-                ),
-
-                "Precision": precision_score(
-                    y_test,
-                    predictions
-                ),
-
-                "Recall": recall_score(
-                    y_test,
-                    predictions
-                ),
-
-                "F1": f1_score(
-                    y_test,
-                    predictions
-                ),
-
-                "MCC": matthews_corrcoef(
-                    y_test,
-                    predictions
-                )
+                "Accuracy": accuracy_score(y_test,predictions),
+                "AUC": roc_auc_score(y_test,probabilities),
+                "Precision": precision_score(y_test,predictions),
+                "Recall": recall_score(y_test,predictions),
+                "F1": f1_score(y_test,predictions),
+                "MCC": matthews_corrcoef(y_test,predictions)
             }
         )
 
     except Exception as error:
-
         st.warning(
             f"Could not evaluate {model_name}: {error}"
         )
 
-
 comparison_df = pd.DataFrame(
     comparison_results
 )
-
 
 metric_columns = [
     "Accuracy",
@@ -698,10 +469,7 @@ metric_columns = [
     "MCC"
 ]
 
-
-# Display rounded values without changing
-# the actual values used for comparison.
-
+# Display rounded values without changing ; the actual values used for comparison.
 display_df = comparison_df.copy()
 
 display_df[metric_columns] = (
@@ -714,11 +482,7 @@ st.dataframe(
     hide_index=True
 )
 
-
-# ============================================================
-# BEST MODEL FOR EACH METRIC
-# ============================================================
-
+# BEST MODEL FOR EACH METRIC DISPLAY
 st.markdown(
     """
 <div class="section-title section-green">
@@ -729,7 +493,6 @@ st.markdown(
 )
 
 best_models = {}
-
 for metric in metric_columns:
 
     best_index = comparison_df[
@@ -740,7 +503,6 @@ for metric in metric_columns:
         best_index,
         "Model"
     ]
-
 
 best_df = pd.DataFrame(
     {
@@ -755,11 +517,7 @@ st.dataframe(
     hide_index=True
 )
 
-
-# ============================================================
-# OVERALL WINNER
-# ============================================================
-
+# OVERALL WINNER PLOTTING
 winner_index = comparison_df[
     "MCC"
 ].idxmax()
@@ -773,7 +531,6 @@ winner_mcc = comparison_df.loc[
     winner_index,
     "MCC"
 ]
-
 
 st.markdown(
     f"""
@@ -801,11 +558,7 @@ Matthews Correlation Coefficient (MCC).
     unsafe_allow_html=True
 )
 
-
-# ============================================================
 # CONCLUSION
-# ============================================================
-
 st.markdown(
     """
 <div class="section-title section-orange">
