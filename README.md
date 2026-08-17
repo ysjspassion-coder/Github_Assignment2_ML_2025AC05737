@@ -78,7 +78,7 @@ The following results are obtained on the held-out test data:
 | **kNN** | Performed strongly with high Accuracy and Recall. Feature standardization is important because kNN relies on distances between observations. |
 | **Naive Bayes** | Achieved the highest Recall of 1.0000, meaning it detected all positive-class samples in this test set. Its overall Accuracy and Precision were lower than Logistic Regression. |
 | **Random Forest** | Performed better than the single Decision Tree on most metrics, but its performance was below Logistic Regression on this test set. |
-| **Overall Winner** | **Logistic Regression**, based on the highest number of metric-wise wins (5 out of 6 metrics). Naive Bayes achieved the highest Recall. |
+| **Overall Winner** | **Logistic Regression**, selected using the highest Matthews Correlation Coefficient (MCC = 0.9623) — the same criterion used by the Streamlit app to pick the winner. It also independently won 5 of the 6 individual metrics, reinforcing the result. Naive Bayes achieved the highest Recall. |
 
 ### Metric-wise Best Models
 
@@ -91,7 +91,9 @@ The following results are obtained on the held-out test data:
 | F1 Score | Logistic Regression |
 | MCC | Logistic Regression |
 
-Therefore, **Logistic Regression is selected as the overall best-performing model**, while **Naive Bayes has the best Recall** on the test data.
+Therefore, **Logistic Regression is selected as the overall best-performing model based on the highest MCC**, while **Naive Bayes has the best Recall** on the test data.
+
+**Why MCC:** MCC is used as the primary criterion because it accounts for all four confusion-matrix outcomes and stays reliable even under the dataset's mild class imbalance (357 Benign vs 212 Malignant), unlike Accuracy or F1 which can be skewed by the majority class.
 
 ---
 
@@ -106,7 +108,7 @@ The Streamlit application provides the following required features:
 - Display the classification report
 - Compare the results of all five models on the uploaded test data
 - Dynamically identify the best model for each metric
-- Display the overall winner based on the number of metric-wise wins
+- Display the overall winner based on the highest MCC (Matthews Correlation Coefficient)
 
 Only the test data is uploaded to the Streamlit application; the trained models are loaded from the `model/` folder.
 
