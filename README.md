@@ -39,7 +39,7 @@ The test portion is saved as `test_data.csv` for use by the Streamlit applicatio
 
 ## c. GitHub Repository Link
 
-**GitHub Repository:** https://github.com/2025ac05737-code/Github_Assignment2_ML_2025AC05737/tree/main
+**GitHub Repository:** https://github.com/ysjspassion-coder/Github_Assignment2_ML_2025AC05737
 
 The repository contains the required notebook, Streamlit application, requirements file, test data, README, and saved model files.
 
