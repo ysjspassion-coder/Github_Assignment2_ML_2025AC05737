@@ -151,7 +151,7 @@ Upload `test_data.csv` through the application and select the required model fro
 
 The application can be deployed using Streamlit Community Cloud by connecting the GitHub repository and selecting `app.py` as the application file.
 
-**Live App Link:** Add the deployed Streamlit URL here after deployment.
+**Live App Link:** https://appassignment2ml2025ac05737-vrpy23mhbvw6cjxozu4zu6.streamlit.app/
 
 ---
 
